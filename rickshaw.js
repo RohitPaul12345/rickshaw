@@ -11,17 +11,17 @@
 }(this, function (d3) {
 /* jshint -W079 */
 
-var Rickshaw = {
+let Rickshaw = {
 	version: '1.7.1',
 
 	namespace: function(namespace, obj) {
 
-		var parts = namespace.split('.');
+		let parts = namespace.split('.');
 
-		var parent = Rickshaw;
+		let parent = Rickshaw;
 
-		for(var i = 1, length = parts.length; i < length; i++) {
-			var currentPart = parts[i];
+		for(let i = 1, length = parts.length; i < length; i++) {
+			let currentPart = parts[i];
 			parent[currentPart] = parent[currentPart] || {};
 			parent = parent[currentPart];
 		}
@@ -29,14 +29,14 @@ var Rickshaw = {
 	},
 
 	keys: function(obj) {
-		var keys = [];
-		for (var key in obj) keys.push(key);
+		let keys = [];
+		for (let key in obj) keys.push(key);
 		return keys;
 	},
 
 	extend: function(destination, source) {
 
-		for (var property in source) {
+		for (let property in source) {
 			destination[property] = source[property];
 		}
 		return destination;
@@ -79,7 +79,7 @@ SOFTWARE.
 /* ------------------------------------ */
 /* Import from object.js                */
 /* ------------------------------------ */
-var _toString = Object.prototype.toString,
+let _toString = Object.prototype.toString,
     NULL_TYPE = 'Null',
     UNDEFINED_TYPE = 'Undefined',
     BOOLEAN_TYPE = 'Boolean',
@@ -91,14 +91,14 @@ function isFunction(object) {
   return _toString.call(object) === FUNCTION_CLASS;
 }
 function extend(destination, source) {
-  for (var property in source) if (source.hasOwnProperty(property)) // modify protect primitive slaughter
+  for (let property in source) if (source.hasOwnProperty(property)) // modify protect primitive slaughter
     destination[property] = source[property];
   return destination;
 }
 function keys(object) {
   if (Type(object) !== OBJECT_TYPE) { throw new TypeError(); }
-  var results = [];
-  for (var property in object) {
+  let results = [];
+  for (let property in object) {
     if (object.hasOwnProperty(property)) {
       results.push(property);
     }
@@ -110,7 +110,7 @@ function Type(o) {
     case null: return NULL_TYPE;
     case (void 0): return UNDEFINED_TYPE;
   }
-  var type = typeof o;
+  let type = typeof o;
   switch(type) {
     case 'boolean': return BOOLEAN_TYPE;
     case 'number':  return NUMBER_TYPE;
@@ -124,22 +124,22 @@ function isUndefined(object) {
 /* ------------------------------------ */
 /* Import from Function.js              */
 /* ------------------------------------ */
-var slice = Array.prototype.slice;
+let slice = Array.prototype.slice;
 function argumentNames(fn) {
-  var names = fn.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
+  let names = fn.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1]
     .replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
     .replace(/\s+/g, '').split(',');
   return names.length == 1 && !names[0] ? [] : names;
 }
 function wrap(fn, wrapper) {
-  var __method = fn;
+  let __method = fn;
   return function() {
-    var a = update([bind(__method, this)], arguments);
+    let a = update([bind(__method, this)], arguments);
     return wrapper.apply(this, a);
   }
 }
 function update(array, args) {
-  var arrayLength = array.length, length = args.length;
+  let arrayLength = array.length, length = args.length;
   while (length--) array[arrayLength + length] = args[length];
   return array;
 }
@@ -149,9 +149,9 @@ function merge(array, args) {
 }
 function bind(fn, context) {
   if (arguments.length < 2 && isUndefined(arguments[0])) return this;
-  var __method = fn, args = slice.call(arguments, 2);
+  let __method = fn, args = slice.call(arguments, 2);
   return function() {
-    var a = merge(args, arguments);
+    let a = merge(args, arguments);
     return __method.apply(context, a);
   }
 }
@@ -159,14 +159,14 @@ function bind(fn, context) {
 /* ------------------------------------ */
 /* Import from Prototype.js             */
 /* ------------------------------------ */
-var emptyFunction = function(){};
+let emptyFunction = function(){};
 
-var Class = (function() {
+let Class = (function() {
   
   // Some versions of JScript fail to enumerate over properties, names of which 
   // correspond to non-enumerable properties in the prototype chain
-  var IS_DONTENUM_BUGGY = (function(){
-    for (var p in { toString: 1 }) {
+  let IS_DONTENUM_BUGGY = (function(){
+    for (let p in { toString: 1 }) {
       // check actual property name, so that it works with augmented Object.prototype
       if (p === 'toString') return false;
     }
@@ -175,7 +175,7 @@ var Class = (function() {
   
   function subclass() {};
   function create() {
-    var parent = null, properties = [].slice.apply(arguments);
+    let parent = null, properties = [].slice.apply(arguments);
     if (isFunction(properties[0]))
       parent = properties.shift();
 
@@ -193,7 +193,7 @@ var Class = (function() {
       try { parent.subclasses.push(klass) } catch(e) {}
     }
 
-    for (var i = 0, length = properties.length; i < length; i++)
+    for (let i = 0, length = properties.length; i < length; i++)
       klass.addMethods(properties[i]);
 
     if (!klass.prototype.initialize)
@@ -204,7 +204,7 @@ var Class = (function() {
   }
 
   function addMethods(source) {
-    var ancestor   = this.superclass && this.superclass.prototype,
+    let ancestor   = this.superclass && this.superclass.prototype,
         properties = keys(source);
 
     // IE6 doesn't enumerate `toString` and `valueOf` (among other built-in `Object.prototype`) properties,
@@ -217,11 +217,11 @@ var Class = (function() {
         properties.push("valueOf");
     }
 
-    for (var i = 0, length = properties.length; i < length; i++) {
-      var property = properties[i], value = source[property];
+    for (let i = 0, length = properties.length; i < length; i++) {
+      let property = properties[i], value = source[property];
       if (ancestor && isFunction(value) &&
           argumentNames(value)[0] == "$super") {
-        var method = value;
+        let method = value;
         value = wrap((function(m) {
           return function() { return ancestor[m].apply(this, arguments); };
         })(property), method);
@@ -262,7 +262,7 @@ Rickshaw.Compat.ClassList = function() {
 
 	"use strict";
 
-	var
+	let
 		  classListProp = "classList"
 		, protoProp = "prototype"
 		, elemCtrProto = (view.HTMLElement || view.Element)[protoProp]
@@ -271,7 +271,7 @@ Rickshaw.Compat.ClassList = function() {
 			return this.replace(/^\s+|\s+$/g, "");
 		}
 		, arrIndexOf = Array[protoProp].indexOf || function (item) {
-			var
+			let
 				  i = 0
 				, len = this.length
 			;
@@ -304,7 +304,7 @@ Rickshaw.Compat.ClassList = function() {
 			return arrIndexOf.call(classList, token);
 		}
 		, ClassList = function (elem) {
-			var
+			let
 				  trimmedClasses = strTrim.call(elem.className)
 				, classes = trimmedClasses ? trimmedClasses.split(/\s+/) : []
 				, i = 0
@@ -341,7 +341,7 @@ Rickshaw.Compat.ClassList = function() {
 	};
 	classListProto.remove = function (token) {
 		token += "";
-		var index = checkTokenAndGetIndex(this, token);
+		let index = checkTokenAndGetIndex(this, token);
 		if (index !== -1) {
 			this.splice(index, 1);
 			this._updateClassName();
@@ -360,7 +360,7 @@ Rickshaw.Compat.ClassList = function() {
 	};
 
 	if (objCtr.defineProperty) {
-		var classListPropDesc = {
+		let classListPropDesc = {
 			  get: classListGetter
 			, enumerable: true
 			, configurable: true
@@ -389,7 +389,7 @@ Rickshaw.namespace('Rickshaw.Graph');
 
 Rickshaw.Graph = function(args) {
 
-	var self = this;
+	let self = this;
 
 	this.initialize = function(args) {
 
@@ -431,9 +431,9 @@ Rickshaw.Graph = function(args) {
 
 	this._loadRenderers = function() {
 
-		for (var name in Rickshaw.Graph.Renderer) {
+		for (let name in Rickshaw.Graph.Renderer) {
 			if (!name || !Rickshaw.Graph.Renderer.hasOwnProperty(name)) continue;
-			var r = Rickshaw.Graph.Renderer[name];
+			let r = Rickshaw.Graph.Renderer[name];
 			if (!r || !r.prototype || !r.prototype.render) continue;
 			self.registerRenderer(new r( { graph: self } ));
 		}
@@ -442,11 +442,11 @@ Rickshaw.Graph = function(args) {
 	this.validateSeries = function(series) {
 
 		if (!Array.isArray(series) && !(series instanceof Rickshaw.Series)) {
-			var seriesSignature = Object.prototype.toString.apply(series);
+			let seriesSignature = Object.prototype.toString.apply(series);
 			throw "series is not an array: " + seriesSignature;
 		}
 
-		var pointsCount;
+		let pointsCount;
 
 		series.forEach( function(s) {
 
@@ -461,8 +461,8 @@ Rickshaw.Graph = function(args) {
 			}
 
 			if (s.data.length > 0) {
-				var x = s.data[0].x;
-				var y = s.data[0].y;
+				let x = s.data[0].x;
+				let y = s.data[0].y;
 
 				if (typeof x != 'number' || ( typeof y != 'number' && y !== null ) ) {
 					throw "x and y properties of points should be numbers instead of " +
@@ -488,17 +488,17 @@ Rickshaw.Graph = function(args) {
 
 	this.dataDomain = function() {
 
-		var data = this.series.map( function(s) { return s.data } );
+		let data = this.series.map( function(s) { return s.data } );
 
-		var min = d3.min( data.map( function(d) { return d[0].x } ) );
-		var max = d3.max( data.map( function(d) { return d[d.length - 1].x } ) );
+		let min = d3.min( data.map( function(d) { return d[0].x } ) );
+		let max = d3.max( data.map( function(d) { return d[d.length - 1].x } ) );
 
 		return [min, max];
 	};
 
 	this.discoverRange = function() {
 
-		var domain = this.renderer.domain();
+		let domain = this.renderer.domain();
 
 		// this.*Scale is coming from the configuration dictionary
 		// which may be referenced by the Graph creator, or shared
@@ -519,7 +519,7 @@ Rickshaw.Graph = function(args) {
 
 	this.render = function() {
 
-		var stackedData = this.stackData();
+		let stackedData = this.stackData();
 		this.discoverRange();
 
 		this.renderer.render();
@@ -534,11 +534,11 @@ Rickshaw.Graph = function(args) {
 
 	this.stackData = function() {
 
-		var data = this.series.active()
+		let data = this.series.active()
 			.map( function(d) { return d.data } )
 			.map( function(d) { return d.filter( function(d) { return this._slice(d) }, this ) }, this);
 
-		var preserve = this.preserve;
+		let preserve = this.preserve;
 		if (!preserve) {
 			this.series.forEach( function(series) {
 				if (series.scale) {
@@ -553,7 +553,7 @@ Rickshaw.Graph = function(args) {
 		this.series.active().forEach( function(series, index) {
 			if (series.scale) {
 				// apply scale to each series
-				var seriesData = data[index];
+				let seriesData = data[index];
 				if(seriesData) {
 					seriesData.forEach( function(d) {
 						d.y = series.scale(d.y);
@@ -566,13 +566,13 @@ Rickshaw.Graph = function(args) {
 			data = entry.f.apply(self, [data]);
 		} );
 
-		var stackedData;
+		let stackedData;
 
 		if (!this.renderer.unstack) {
 
 			this._validateStackable();
 
-			var layout = d3.layout.stack();
+			let layout = d3.layout.stack();
 			layout.offset( self.offset );
 			stackedData = layout(data);
 		}
@@ -591,7 +591,7 @@ Rickshaw.Graph = function(args) {
 			stackedData = entry.f.apply(self, [data]);
 		} );
 
-		var i = 0;
+		let i = 0;
 		this.series.forEach( function(series) {
 			if (series.disabled) return;
 			series.stack = stackedData[i++];
@@ -603,8 +603,8 @@ Rickshaw.Graph = function(args) {
 
 	this._validateStackable = function() {
 
-		var series = this.series;
-		var pointsCount;
+		let series = this.series;
+		let pointsCount;
 
 		series.forEach( function(s) {
 
@@ -624,7 +624,7 @@ Rickshaw.Graph = function(args) {
 
 		if (this.window.xMin || this.window.xMax) {
 
-			var isInRange = true;
+			let isInRange = true;
 
 			if (this.window.xMin && d.x < this.window.xMin) isInRange = false;
 			if (this.window.xMax && d.x > this.window.xMax) isInRange = false;
@@ -668,7 +668,7 @@ Rickshaw.Graph = function(args) {
 
 		if ('stack' in args) args.unstack = !args.stack;
 
-		var renderer = args.renderer || (this.renderer && this.renderer.name) || 'stack';
+		let renderer = args.renderer || (this.renderer && this.renderer.name) || 'stack';
 		this.setRenderer(renderer, args);
 
 		this.configureCallbacks.forEach( function(callback) {
@@ -703,9 +703,9 @@ Rickshaw.Graph = function(args) {
 		} else {
 			// calc size (will cause layout reflow)
 			if (typeof window !== 'undefined') {
-				var style = window.getComputedStyle(this.element, null);
-				var elementWidth = parseInt(style.getPropertyValue('width'), 10);
-				var elementHeight = parseInt(style.getPropertyValue('height'), 10);
+				let style = window.getComputedStyle(this.element, null);
+				let elementWidth = parseInt(style.getPropertyValue('width'), 10);
+				let elementHeight = parseInt(style.getPropertyValue('height'), 10);
 			}
 
 			this.width = args.width || elementWidth || 400;
@@ -882,23 +882,23 @@ Rickshaw.namespace('Rickshaw.Fixtures.RandomData');
 
 Rickshaw.Fixtures.RandomData = function(timeInterval) {
 
-	var addData;
+	let addData;
 	timeInterval = timeInterval || 1;
 
-	var lastRandomValue = 200;
+	let lastRandomValue = 200;
 
-	var timeBase = Math.floor(new Date().getTime() / 1000);
+	let timeBase = Math.floor(new Date().getTime() / 1000);
 
 	this.addData = function(data) {
 
-		var randomValue = Math.random() * 100 + 15 + lastRandomValue;
-		var index = data[0].length;
+		let randomValue = Math.random() * 100 + 15 + lastRandomValue;
+		let index = data[0].length;
 
-		var counter = 1;
+		let counter = 1;
 
 		data.forEach( function(series) {
-			var randomVariance = Math.random() * 20;
-			var v = randomValue / 25  + counter++ +
+			let randomVariance = Math.random() * 20;
+			let v = randomValue / 25  + counter++ +
 				(Math.cos((index * counter * 11) / 960) + 2) * 15 +
 				(Math.cos(index / 7) + 2) * 7 +
 				(Math.cos(index / 17) + 2) * 1;
@@ -921,7 +921,7 @@ Rickshaw.namespace('Rickshaw.Fixtures.Time');
 
 Rickshaw.Fixtures.Time = function() {
 
-	var self = this;
+	let self = this;
 
 	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -995,7 +995,7 @@ Rickshaw.Fixtures.Time = function() {
 
 	this.ceil = function(time, unit) {
 
-		var date, floor, year;
+		let date, floor, year;
 
 		if (unit.name == 'month') {
 
@@ -1005,7 +1005,7 @@ Rickshaw.Fixtures.Time = function() {
 			if (floor == time) return time;
 
 			year = date.getUTCFullYear();
-			var month = date.getUTCMonth();
+			let month = date.getUTCMonth();
 
 			if (month == 11) {
 				month = 0;
@@ -1036,7 +1036,7 @@ Rickshaw.namespace('Rickshaw.Fixtures.Time.Local');
 
 Rickshaw.Fixtures.Time.Local = function() {
 
-	var self = this;
+	let self = this;
 
 	this.months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -1110,13 +1110,13 @@ Rickshaw.Fixtures.Time.Local = function() {
 
 	this.ceil = function(time, unit) {
 
-		var date, floor, year, offset;
+		let date, floor, year, offset;
 
 		if (unit.name == 'day') {
 
-			var nearFuture = new Date((time + unit.seconds - 1) * 1000);
+			let nearFuture = new Date((time + unit.seconds - 1) * 1000);
 
-			var rounded = new Date(0);
+			let rounded = new Date(0);
 			rounded.setFullYear(nearFuture.getFullYear());
 			rounded.setMonth(nearFuture.getMonth());
 			rounded.setDate(nearFuture.getDate());
@@ -1136,7 +1136,7 @@ Rickshaw.Fixtures.Time.Local = function() {
 			if (floor == time) return time;
 
 			year = date.getFullYear();
-			var month = date.getMonth();
+			let month = date.getMonth();
 
 			if (month == 11) {
 				month = 0;
@@ -1166,7 +1166,7 @@ Rickshaw.Fixtures.Time.Local = function() {
 Rickshaw.namespace('Rickshaw.Fixtures.Number');
 
 Rickshaw.Fixtures.Number.formatKMBT = function(y) {
-	var abs_y = Math.abs(y);
+	let abs_y = Math.abs(y);
 	if (abs_y >= 1000000000000)      { return (y / 1000000000000).toFixed(2) + "T" }
 	else if (abs_y >= 1000000000)    { return (y / 1000000000).toFixed(2) + "B" }
 	else if (abs_y >= 1000000)       { return (y / 1000000).toFixed(2) + "M" }
@@ -1177,7 +1177,7 @@ Rickshaw.Fixtures.Number.formatKMBT = function(y) {
 };
 
 Rickshaw.Fixtures.Number.formatBase1024KMGTP = function(y) {
-	var abs_y = Math.abs(y);
+	let abs_y = Math.abs(y);
 	if (abs_y >= 1125899906842624)   { return (y / 1125899906842624).toFixed(2) + "P" }
 	else if (abs_y >= 1099511627776) { return (y / 1099511627776).toFixed(2) + "T" }
 	else if (abs_y >= 1073741824)    { return (y / 1073741824).toFixed(2) + "G" }
@@ -1191,7 +1191,7 @@ Rickshaw.namespace("Rickshaw.Color.Palette");
 
 Rickshaw.Color.Palette = function(args) {
 
-	var color = new Rickshaw.Fixtures.Color();
+	let color = new Rickshaw.Fixtures.Color();
 
 	args = args || {};
 	this.schemes = {};
@@ -1201,11 +1201,11 @@ Rickshaw.Color.Palette = function(args) {
 	this.generatorIndex = 0;
 
 	if (args.interpolatedStopCount) {
-		var schemeCount = this.scheme.length - 1;
-		var i, j, scheme = [];
+		let schemeCount = this.scheme.length - 1;
+		let i, j, scheme = [];
 		for (i = 0; i < schemeCount; i++) {
 			scheme.push(this.scheme[i]);
-			var generator = d3.interpolateHsl(this.scheme[i], this.scheme[i + 1]);
+			let generator = d3.interpolateHsl(this.scheme[i], this.scheme[i + 1]);
 			for (j = 1; j < args.interpolatedStopCount; j++) {
 				scheme.push(generator((1 / args.interpolatedStopCount) * j));
 			}
@@ -1221,7 +1221,7 @@ Rickshaw.Color.Palette = function(args) {
 
 	this.interpolateColor = function() {
 		if (!Array.isArray(this.scheme)) return;
-		var color;
+		let color;
 		if (this.generatorIndex == this.rotateCount * 2 - 1) {
 			color = d3.interpolateHsl(this.scheme[this.generatorIndex], this.scheme[0])(0.5);
 			this.generatorIndex = 0;
@@ -1281,23 +1281,23 @@ Rickshaw.Graph.Ajax = Rickshaw.Class.create( {
 
 	_splice: function(args) {
 
-		var data = args.data;
-		var series = args.series;
+		let data = args.data;
+		let series = args.series;
 
 		if (!args.series) return data;
 
 		series.forEach( function(s) {
 
-			var seriesKey = s.key || s.name;
+			let seriesKey = s.key || s.name;
 			if (!seriesKey) throw "series needs a key or a name";
 
 			data.forEach( function(d) {
 
-				var dataKey = d.key || d.name;
+				let dataKey = d.key || d.name;
 				if (!dataKey) throw "data needs a key or a name";
 
 				if (seriesKey == dataKey) {
-					var properties = ['color', 'name', 'data'];
+					let properties = ['color', 'name', 'data'];
 					properties.forEach( function(p) {
 						if (d[p]) s[p] = d[p];
 					} );
@@ -1313,10 +1313,10 @@ Rickshaw.namespace('Rickshaw.Graph.Annotate');
 
 Rickshaw.Graph.Annotate = function(args) {
 
-	var graph = this.graph = args.graph;
+	let graph = this.graph = args.graph;
 	this.elements = { timeline: args.element };
 	
-	var self = this;
+	let self = this;
 
 	this.data = {};
 
@@ -1331,8 +1331,8 @@ Rickshaw.Graph.Annotate = function(args) {
 
 		Rickshaw.keys(self.data).forEach( function(time) {
 
-			var annotation = self.data[time];
-			var left = self.graph.x(time);
+			let annotation = self.data[time];
+			let left = self.graph.x(time);
 
 			if (left < 0 || left > self.graph.x.range()[1]) {
 				if (annotation.element) {
@@ -1348,7 +1348,7 @@ Rickshaw.Graph.Annotate = function(args) {
 			}
 
 			if (!annotation.element) {
-				var element = annotation.element = document.createElement('div');
+				let element = annotation.element = document.createElement('div');
 				element.classList.add('annotation');
 				this.elements.timeline.appendChild(element);
 				element.addEventListener('click', function(e) {
@@ -1367,7 +1367,7 @@ Rickshaw.Graph.Annotate = function(args) {
 			annotation.boxes.forEach( function(box) {
 
 
-				var element = box.element;
+				let element = box.element;
 
 				if (!element) {
 					element = box.element = document.createElement('div');
@@ -1389,8 +1389,8 @@ Rickshaw.Graph.Annotate = function(args) {
 
 				if ( box.end ) {
 
-					var annotationRangeStart = left;
-					var annotationRangeEnd   = Math.min( self.graph.x(box.end), self.graph.x.range()[1] );
+					let annotationRangeStart = left;
+					let annotationRangeEnd   = Math.min( self.graph.x(box.end), self.graph.x.range()[1] );
 
 					// annotation makes more sense at end
 					if ( annotationRangeStart > annotationRangeEnd ) {
@@ -1398,7 +1398,7 @@ Rickshaw.Graph.Annotate = function(args) {
 						annotationRangeStart = Math.max( self.graph.x(box.end), self.graph.x.range()[0] );
 					}
 
-					var annotationRangeWidth = annotationRangeEnd - annotationRangeStart;
+					let annotationRangeWidth = annotationRangeEnd - annotationRangeStart;
 
 					box.rangeElement.style.left  = annotationRangeStart + 'px';
 					box.rangeElement.style.width = annotationRangeWidth + 'px';
@@ -1418,22 +1418,22 @@ Rickshaw.namespace('Rickshaw.Graph.Axis.Time');
 
 Rickshaw.Graph.Axis.Time = function(args) {
 
-	var self = this;
+	let self = this;
 
 	this.graph = args.graph;
 	this.elements = [];
 	this.ticksTreatment = args.ticksTreatment || 'plain';
 	this.fixedTimeUnit = args.timeUnit;
 
-	var time = args.timeFixture || new Rickshaw.Fixtures.Time();
+	let time = args.timeFixture || new Rickshaw.Fixtures.Time();
 
 	this.appropriateTimeUnit = function() {
 
-		var unit;
-		var units = time.units;
+		let unit;
+		let units = time.units;
 
-		var domain = this.graph.x.domain();
-		var rangeSeconds = domain[1] - domain[0];
+		let domain = this.graph.x.domain();
+		let rangeSeconds = domain[1] - domain[0];
 
 		units.forEach( function(u) {
 			if (Math.floor(rangeSeconds / u.seconds) >= 2) {
@@ -1446,18 +1446,18 @@ Rickshaw.Graph.Axis.Time = function(args) {
 
 	this.tickOffsets = function() {
 
-		var domain = this.graph.x.domain();
+		let domain = this.graph.x.domain();
 
-		var unit = this.fixedTimeUnit || this.appropriateTimeUnit();
-		var count = Math.ceil((domain[1] - domain[0]) / unit.seconds);
+		let unit = this.fixedTimeUnit || this.appropriateTimeUnit();
+		let count = Math.ceil((domain[1] - domain[0]) / unit.seconds);
 
-		var runningTick = domain[0];
+		let runningTick = domain[0];
 
-		var offsets = [];
+		let offsets = [];
 
-		for (var i = 0; i < count; i++) {
+		for (let i = 0; i < count; i++) {
 
-			var tickValue = time.ceil(runningTick, unit);
+			let tickValue = time.ceil(runningTick, unit);
 			runningTick = tickValue + unit.seconds / 2;
 
 			offsets.push( { value: tickValue, unit: unit } );
@@ -1474,18 +1474,18 @@ Rickshaw.Graph.Axis.Time = function(args) {
 
 		this.elements = [];
 
-		var offsets = this.tickOffsets();
+		let offsets = this.tickOffsets();
 
 		offsets.forEach( function(o) {
 			
 			if (self.graph.x(o.value) > self.graph.x.range()[1]) return;
 	
-			var element = document.createElement('div');
+			let element = document.createElement('div');
 			element.style.left = self.graph.x(o.value) + 'px';
 			element.classList.add('x_tick');
 			element.classList.add(self.ticksTreatment);
 
-			var title = document.createElement('div');
+			let title = document.createElement('div');
 			title.classList.add('title');
 			title.innerHTML = o.unit.formatter(new Date(o.value * 1000));
 			element.appendChild(title);
@@ -1503,8 +1503,8 @@ Rickshaw.namespace('Rickshaw.Graph.Axis.X');
 
 Rickshaw.Graph.Axis.X = function(args) {
 
-	var self = this;
-	var berthRate = 0.10;
+	let self = this;
+	let berthRate = 0.10;
 
 	this.initialize = function(args) {
 
@@ -1562,19 +1562,19 @@ Rickshaw.Graph.Axis.X = function(args) {
 
 		if (this._renderWidth !== undefined && this.graph.width !== this._renderWidth) this.setSize({ auto: true });
 
-		var axis = d3.svg.axis().scale(this.graph.x).orient(this.orientation);
+		let axis = d3.svg.axis().scale(this.graph.x).orient(this.orientation);
 		axis.tickFormat( args.tickFormat || function(x) { return x } );
 		if (this.tickValues) axis.tickValues(this.tickValues);
 
 		this.ticks = this.staticTicks || Math.floor(this.graph.width / this.pixelsPerTick);
 
-		var berth = Math.floor(this.width * berthRate / 2) || 0;
-		var bar_offset = this.graph.renderer.name == "bar" && Math.ceil(this.graph.width * 0.95 / this.graph.series[0].data.length / 2) || 0;
+		let berth = Math.floor(this.width * berthRate / 2) || 0;
+		let bar_offset = this.graph.renderer.name == "bar" && Math.ceil(this.graph.width * 0.95 / this.graph.series[0].data.length / 2) || 0;
 
-		var transform;
+		let transform;
 
 		if (this.orientation == 'top') {
-			var yOffset = this.height || this.graph.height;
+			let yOffset = this.height || this.graph.height;
 			transform = 'translate(' + (berth + bar_offset) + ',' + yOffset + ')';
 		} else {
 			transform = 'translate(' + (berth + bar_offset) + ', 0)';
@@ -1590,7 +1590,7 @@ Rickshaw.Graph.Axis.X = function(args) {
 			.attr("transform", transform)
 			.call(axis.ticks(this.ticks).tickSubdivide(0).tickSize(this.tickSize));
 
-		var gridSize = (this.orientation == 'bottom' ? 1 : -1) * this.graph.height;
+		let gridSize = (this.orientation == 'bottom' ? 1 : -1) * this.graph.height;
 
 		this.graph.vis
 			.append("svg:g")
@@ -1606,11 +1606,11 @@ Rickshaw.Graph.Axis.X = function(args) {
 
 		if (typeof window !== 'undefined') {
 
-			var style = window.getComputedStyle(element, null);
-			var elementHeight = parseInt(style.getPropertyValue('height'), 10);
+			let style = window.getComputedStyle(element, null);
+			let elementHeight = parseInt(style.getPropertyValue('height'), 10);
 
 			if (!args.auto) {
-				var elementWidth = parseInt(style.getPropertyValue('width'), 10);
+				let elementWidth = parseInt(style.getPropertyValue('width'), 10);
 			}
 		}
 
@@ -1659,7 +1659,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 			this.vis = this.graph.vis;
 		}
 
-		var self = this;
+		let self = this;
 		this.graph.onUpdate( function() { self.render() } );
 	},
 
@@ -1671,11 +1671,11 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 
 		if (typeof window !== 'undefined') {
 
-			var style = window.getComputedStyle(this.element.parentNode, null);
-			var elementWidth = parseInt(style.getPropertyValue('width'), 10);
+			let style = window.getComputedStyle(this.element.parentNode, null);
+			let elementWidth = parseInt(style.getPropertyValue('width'), 10);
 
 			if (!args.auto) {
-				var elementHeight = parseInt(style.getPropertyValue('height'), 10);
+				let elementHeight = parseInt(style.getPropertyValue('height'), 10);
 			}
 		}
 
@@ -1686,7 +1686,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 			.attr('width', this.width)
 			.attr('height', this.height * (1 + this.berthRate));
 
-		var berth = this.height * this.berthRate;
+		let berth = this.height * this.berthRate;
 
 		if (this.orientation == 'left') {
 			this.element.style.top = -1 * berth + 'px';
@@ -1699,7 +1699,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 
 		this.ticks = this.staticTicks || Math.floor(this.graph.height / this.pixelsPerTick);
 
-		var axis = this._drawAxis(this.graph.y);
+		let axis = this._drawAxis(this.graph.y);
 
 		this._drawGrid(axis);
 
@@ -1707,13 +1707,13 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 	},
 
 	_drawAxis: function(scale) {
-		var axis = d3.svg.axis().scale(scale).orient(this.orientation);
+		let axis = d3.svg.axis().scale(scale).orient(this.orientation);
 		axis.tickFormat(this.tickFormat);
 		if (this.tickValues) axis.tickValues(this.tickValues);
 
 		if (this.orientation == 'left') {
-			var berth = this.height * this.berthRate;
-			var transform = 'translate(' + this.width + ', ' + berth + ')';
+			let berth = this.height * this.berthRate;
+			let transform = 'translate(' + this.width + ', ' + berth + ')';
 		}
 
 		if (this.element) {
@@ -1730,7 +1730,7 @@ Rickshaw.Graph.Axis.Y = Rickshaw.Class.create( {
 	},
 
 	_drawGrid: function(axis) {
-		var gridSize = (this.orientation == 'right' ? 1 : -1) * this.graph.width;
+		let gridSize = (this.orientation == 'right' ? 1 : -1) * this.graph.width;
 
 		this.graph.vis
 			.append("svg:g")
@@ -1765,28 +1765,28 @@ Rickshaw.Graph.Axis.Y.Scaled = Rickshaw.Class.create( Rickshaw.Graph.Axis.Y, {
   _drawAxis: function($super, scale) {
     // Adjust scale's domain to compensate for adjustments to the
     // renderer's domain (e.g. padding).
-    var domain = this.scale.domain();
-    var renderDomain = this.graph.renderer.domain().y;
+    let domain = this.scale.domain();
+    let renderDomain = this.graph.renderer.domain().y;
 
-    var extents = [
+    let extents = [
       Math.min.apply(Math, domain),
       Math.max.apply(Math, domain)];
 
     // A mapping from the ideal render domain [0, 1] to the extent
     // of the original scale's domain.  This is used to calculate
     // the extents of the adjusted domain.
-    var extentMap = d3.scale.linear().domain([0, 1]).range(extents);
+    let extentMap = d3.scale.linear().domain([0, 1]).range(extents);
 
-    var adjExtents = [
+    let adjExtents = [
       extentMap(renderDomain[0]),
       extentMap(renderDomain[1])];
 
     // A mapping from the original domain to the adjusted domain.
-    var adjustment = d3.scale.linear().domain(extents).range(adjExtents);
+    let adjustment = d3.scale.linear().domain(extents).range(adjExtents);
 
     // Make a copy of the custom scale, apply the adjusted domain, and
     // copy the range to match the graph's scale.
-    var adjustedScale = this.scale.copy()
+    let adjustedScale = this.scale.copy()
       .domain(domain.map(adjustment))
       .range(scale.range());
 
@@ -1807,17 +1807,17 @@ Rickshaw.Graph.Behavior.Series.Highlight = function(args) {
 	this.graph = args.graph;
 	this.legend = args.legend;
 
-	var self = this;
+	let self = this;
 
-	var propertiesSafe = {};
-	var activeLine = null;
+	let propertiesSafe = {};
+	let activeLine = null;
 
-	var disabledColor = args.disabledColor || function(seriesColor) {
+	let disabledColor = args.disabledColor || function(seriesColor) {
 		return d3.interpolateRgb(seriesColor, d3.rgb('#d8d8d8'))(0.8).toString();
 	};
 
-	var transformFn = args.transform || function(isActive, series) {
-		var newProperties = {};
+	let transformFn = args.transform || function(isActive, series) {
+		let newProperties = {};
 		if (!isActive) {
 			// backwards compability
 			newProperties.color = disabledColor(series.color);
@@ -1834,8 +1834,8 @@ Rickshaw.Graph.Behavior.Series.Highlight = function(args) {
 			else activeLine = l;
 
 			self.legend.lines.forEach( function(line) {
-				var newProperties;
-				var isActive = false;
+				let newProperties;
+				let isActive = false;
 
 				if (l === line) {
 					isActive = true;
@@ -1843,10 +1843,10 @@ Rickshaw.Graph.Behavior.Series.Highlight = function(args) {
 					// if we're not in a stacked renderer bring active line to the top
 					if (self.graph.renderer.unstack && (line.series.renderer ? line.series.renderer.unstack : true)) {
 
-						var seriesIndex = self.graph.series.indexOf(line.series);
+						let seriesIndex = self.graph.series.indexOf(line.series);
 						line.originalIndex = seriesIndex;
 
-						var series = self.graph.series.splice(seriesIndex, 1)[0];
+						let series = self.graph.series.splice(seriesIndex, 1)[0];
 						self.graph.series.push(series);
 					}
 				}
@@ -1881,12 +1881,12 @@ Rickshaw.Graph.Behavior.Series.Highlight = function(args) {
 				// return reordered series to its original place
 				if (l === line && line.hasOwnProperty('originalIndex')) {
 
-					var series = self.graph.series.pop();
+					let series = self.graph.series.pop();
 					self.graph.series.splice(line.originalIndex, 0, series);
 					delete line.originalIndex;
 				}
 
-				var lineProperties = propertiesSafe[line.series.name];
+				let lineProperties = propertiesSafe[line.series.name];
 				if (lineProperties) {
 					line.series.color  = lineProperties.color;
 					line.series.stroke = lineProperties.stroke;
@@ -1912,7 +1912,7 @@ Rickshaw.Graph.Behavior.Series.Order = function(args) {
 	this.graph = args.graph;
 	this.legend = args.legend;
 
-	var self = this;
+	let self = this;
 
 	if (typeof window.jQuery == 'undefined') {
 		throw "couldn't find jQuery at window.jQuery";
@@ -1927,13 +1927,13 @@ Rickshaw.Graph.Behavior.Series.Order = function(args) {
 			containment: 'parent',
 			tolerance: 'pointer',
 			update: function( event, ui ) {
-				var series = [];
+				let series = [];
 				jQuery(self.legend.list).find('li').each( function(index, item) {
 					if (!item.series) return;
 					series.push(item.series);
 				} );
 
-				for (var i = self.graph.series.length - 1; i >= 0; i--) {
+				for (let i = self.graph.series.length - 1; i >= 0; i--) {
 					self.graph.series[i] = series.shift();
 				}
 
@@ -1945,7 +1945,7 @@ Rickshaw.Graph.Behavior.Series.Order = function(args) {
 
 	//hack to make jquery-ui sortable behave
 	this.graph.onUpdate( function() { 
-		var h = window.getComputedStyle(self.legend.element).height;
+		let h = window.getComputedStyle(self.legend.element).height;
 		self.legend.element.style.height = h;
 	} );
 };
@@ -1956,11 +1956,11 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 	this.graph = args.graph;
 	this.legend = args.legend;
 
-	var self = this;
+	let self = this;
 
 	this.addAnchor = function(line) {
 
-		var anchor = document.createElement('a');
+		let anchor = document.createElement('a');
 		anchor.innerHTML = '&#10004;';
 		anchor.classList.add('action');
 		line.element.insertBefore(anchor, line.element.firstChild);
@@ -1979,13 +1979,13 @@ Rickshaw.Graph.Behavior.Series.Toggle = function(args) {
 
 		}.bind(this);
 		
-                var label = line.element.getElementsByTagName('span')[0];
+                let label = line.element.getElementsByTagName('span')[0];
                 label.onclick = function(e){
 
-                        var disableAllOtherLines = line.series.disabled;
+                        let disableAllOtherLines = line.series.disabled;
                         if ( ! disableAllOtherLines ) {
-                                for ( var i = 0; i < self.legend.lines.length; i++ ) {
-                                        var l = self.legend.lines[i];
+                                for ( let i = 0; i < self.legend.lines.length; i++ ) {
+                                        let l = self.legend.lines[i];
                                         if ( line.series === l.series ) {
                                                 // noop
                                         } else if ( l.series.disabled ) {
@@ -2083,7 +2083,7 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 		if (!args || !args.graph) {
 			throw new Error("Rickshaw.Graph.DragZoom needs a reference to a graph");
 		}
-		var defaults = {
+		let defaults = {
 			opacity: 0.5,
 			fill: 'steelblue',
 			minimumTimeSelection: 60,
@@ -2102,11 +2102,11 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 	},
 
 	registerMouseEvents: function() {
-		var self = this;
-		var ESCAPE_KEYCODE = 27;
-		var rectangle;
+		let self = this;
+		let ESCAPE_KEYCODE = 27;
+		let rectangle;
 
-		var drag = {
+		let drag = {
 			startDt: null,
 			stopDt: null,
 			startPX: null,
@@ -2117,7 +2117,7 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 
 		function onMouseup(datum, index) {
 			drag.stopDt = pointAsDate(d3.event);
-			var windowAfterDrag = [
+			let windowAfterDrag = [
 				drag.startDt,
 				drag.stopDt
 			].sort(compareNumbers);
@@ -2125,8 +2125,8 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 			self.graph.window.xMin = windowAfterDrag[0];
 			self.graph.window.xMax = windowAfterDrag[1];
 
-			var endTime = self.graph.window.xMax;
-			var range = self.graph.window.xMax - self.graph.window.xMin;
+			let endTime = self.graph.window.xMax;
+			let range = self.graph.window.xMax - self.graph.window.xMin;
 
 			reset(this);
 
@@ -2138,13 +2138,13 @@ Rickshaw.Graph.DragZoom = Rickshaw.Class.create({
 		}
 
 		function onMousemove() {
-			var offset = drag.stopPX = (d3.event.offsetX || d3.event.layerX);
+			let offset = drag.stopPX = (d3.event.offsetX || d3.event.layerX);
 			if (offset > (self.svgWidth - 1) || offset < 1) {
 				return;
 			}
 
-			var limits = [drag.startPX, offset].sort(compareNumbers);
-			var selectionWidth = limits[1]-limits[0];
+			let limits = [drag.startPX, offset].sort(compareNumbers);
+			let selectionWidth = limits[1]-limits[0];
 			if (isNaN(selectionWidth)) {
 				return reset(this);
 			}
